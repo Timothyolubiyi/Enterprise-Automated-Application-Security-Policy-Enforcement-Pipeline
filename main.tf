@@ -1,13 +1,3 @@
-module "vpc" {
-
-  source = "./modules/vpc"
-
-  cidr = "10.0.0.0/16"
-
-  name = "EnterpriseVPC"
-
-}
-
 module "subnet" {
 
   source = "./modules/subnet"
@@ -108,14 +98,6 @@ module "kms" {
 
 }
 
-module "ec2" {
-
-  source = "./modules/ec2"
-
-  kms_key_arn = module.kms.kms_key_arn
-
-}
-
 module "secretsmanager" {
 
   source = "./modules/secretsmanager"
@@ -130,7 +112,7 @@ module "secretsmanager" {
 
   username = "admin"
 
-  password = "ChangeMe123!"
+  password = "TITAnic@2"
 
 }
 
@@ -170,7 +152,7 @@ module "ec2" {
 
   source = "./modules/ec2"
 
-  instance_type = "t3.large"
+  instance_type = "t3.medium"
 
   private_subnet = module.subnet.private_subnet1
 
@@ -187,22 +169,6 @@ module "ec2" {
 module "cloudwatch" {
 
   source = "./modules/cloudwatch"
-
-  log_group_name = "/enterprise/devsecops"
-
-  retention_days = 30
-
-  kms_key_arn = module.kms.kms_key_arn
-
-  environment = var.environment
-
-}
-
-module "cloudwatch" {
-
-  source = "./modules/cloudwatch"
-
-  cluster_name = module.eks.cluster_name
 
   log_group_name = "/enterprise/devsecops"
 

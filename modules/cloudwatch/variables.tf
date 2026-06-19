@@ -30,12 +30,6 @@ variable "cluster_name" {
 
 }
 
-variable "kms_key_arn" {
-
-  type = string
-
-}
-
 variable "trail_name" {
 
   type = string
@@ -45,19 +39,5 @@ variable "trail_name" {
 variable "s3_bucket_name" {
 
   type = string
-
-}
-
-variable "kms_key_arn" {
-
-  type = string
-
-}
-
-variable "retention_days" {
-
-  type = number
-
-  default = 30
 
 }

@@ -13,9 +13,3 @@ output "flow_log_arn" {
   value = aws_flow_log.vpc.arn
 
 }
-
-output "flow_log_id" {
-
-  value = aws_flow_log.vpc_flow_logs.id
-
-}

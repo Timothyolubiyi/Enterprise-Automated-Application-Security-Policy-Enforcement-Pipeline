@@ -1,13 +1,13 @@
-variable "cidr" {}
-
-variable "name" {}
-
 variable "vpc_id" {
-
-  description = "VPC ID"
-
   type = string
+}
 
+variable "cidr_block" {
+  type = string
+}
+
+variable "availability_zone" {
+  type = string
 }
 
 variable "environment" {

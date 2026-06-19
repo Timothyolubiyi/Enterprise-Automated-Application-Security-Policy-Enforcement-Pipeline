@@ -24,7 +24,7 @@ variable "aws_region" {
 
   type = string
 
-  default = "eu-west-1"
+  default = "eu-north-1"
 
 }
 
@@ -86,10 +86,11 @@ variable "private_az2" {
 
 }
 
-variable "environment" {
 
+variable "cloudwatch" {
   type = string
+}
 
-  default = "dev"
-
+variable "cloudtrail_bucket_name" {
+  type = string
 }

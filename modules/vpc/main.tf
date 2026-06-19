@@ -1,86 +1,43 @@
 resource "aws_vpc" "main" {
-  cidr_block           = var.cidr
-  enable_dns_support   = true
-  enable_dns_hostnames = true
+  cidr_block = var.cidr
+}
+
+resource "aws_internet_gateway" "this" {
+  vpc_id = var.vpc_id
+}
+
+resource "aws_eip" "nat" {
+  domain = "vpc"
+}
+
+resource "aws_nat_gateway" "this" {
+  allocation_id = aws_eip.nat.id
+  subnet_id     = var.public_subnet_id
+
+  depends_on = [var.igw_id]
 
   tags = {
-    Name = var.name
+    Name = "nat-gateway"
   }
 }
 
-
-
-module "vpc" {
-
-  source = "./modules/vpc"
-
-  cidr = "10.0.0.0/16"
-
-  name = "EnterpriseVPC"
-
+resource "aws_route_table" "this" {
+  vpc_id = var.vpc_id
 }
 
-module "subnet" {
+resource "aws_subnet" "this" {
+  vpc_id            = var.vpc_id
+  cidr_block        = var.cidr_block
+  availability_zone = var.availability_zone
 
-  source = "./modules/subnet"
-
-  vpc_id = module.vpc.vpc_id
-
-  public_cidr = "10.0.1.0/24"
-
-  private1_cidr = "10.0.2.0/24"
-
-  private2_cidr = "10.0.3.0/24"
-
-  public_az = "eu-west-1a"
-
-  private1_az = "eu-west-1b"
-
-  private2_az = "eu-west-1c"
-
+  map_public_ip_on_launch = true
 }
 
-module "igw" {
-
-  source = "./modules/igw"
-
-  vpc_id = module.vpc.vpc_id
-
+resource "aws_security_group" "this" {
+  name   = "app-sg"
+  vpc_id = var.vpc_id
 }
 
-module "nat" {
-
-  source = "./modules/nat"
-
-  public_subnet = module.subnet.public_subnet
-
-}
-
-module "route" {
-
-  source = "./modules/route"
-
-  vpc_id = module.vpc.vpc_id
-
-  igw = module.igw.igw_id
-
-  nat = module.nat.nat_id
-
-  public_subnet = module.subnet.public_subnet
-
-  private1 = module.subnet.private_subnet1
-
-  private2 = module.subnet.private_subnet2
-
-}
-
-module "securitygroup" {
-
-  source = "./modules/securitygroup"
-
-  vpc_id = module.vpc.vpc_id
-
-}
 
 #############################################
 # IAM Role for VPC Flow Logs

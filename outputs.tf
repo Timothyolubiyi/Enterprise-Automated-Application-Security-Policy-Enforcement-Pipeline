@@ -102,6 +102,9 @@ output "cloudwatch_log_group" {
 
 }
 
+output "cloudtrail_arn" {
+  value = module.cloudtrail.cloudtrail_arn
+}
 
 output "vpc_flow_log_id" {
 
