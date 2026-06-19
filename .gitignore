@@ -1,0 +1,56 @@
+# Terraform
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Variable files
+terraform.tfvars
+*.auto.tfvars
+
+# Plan files
+*.tfplan
+plan.out
+
+# Sensitive files
+*.pem
+*.key
+*.crt
+
+# AWS credentials
+.aws/
+
+# Environment files
+.env
+.env.*
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Logs
+*.log
+
+# Security scan reports
+scans/
+
+# Python
+__pycache__/
+*.pyc
+
+# Node
+node_modules/
+
+# Kubernetes temporary files
+*.swp

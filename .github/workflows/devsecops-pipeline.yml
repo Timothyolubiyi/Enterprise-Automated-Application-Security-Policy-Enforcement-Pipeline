@@ -1,0 +1,100 @@
+name: Enterprise DevSecOps Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+
+  security-scans:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    #############################################
+    # Checkout Code
+    #############################################
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    #############################################
+    # Semgrep - SAST Scan
+    #############################################
+    - name: Run Semgrep SAST
+      uses: returntocorp/semgrep-action@v1
+      with:
+        config: "p/ci"
+
+    #############################################
+    # Gitleaks - Secret Detection
+    #############################################
+    - name: Run Gitleaks
+      uses: gitleaks/gitleaks-action@v2
+      env:
+        GITLEAKS_ENABLE_COMMENTS: false
+
+    #############################################
+    # Checkov - Terraform/IaC Security Scan
+    #############################################
+    - name: Run Checkov IaC Scan
+      uses: bridgecrewio/checkov-action@master
+      with:
+        directory: terraform
+        framework: terraform
+
+    #############################################
+    # Trivy - Filesystem Scan
+    #############################################
+    - name: Run Trivy FS Scan
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: fs
+        scan-ref: .
+
+    #############################################
+    # Build Docker Image (for Trivy scan)
+    #############################################
+    - name: Build Docker Image
+      run: docker build -t enterprise-app:latest .
+
+    #############################################
+    # Trivy - Container Scan
+    #############################################
+    - name: Run Trivy Container Scan
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: enterprise-app:latest
+        format: table
+        exit-code: 1
+        severity: CRITICAL,HIGH
+
+    #############################################
+    # OPA Policy Enforcement
+    #############################################
+    - name: Install OPA
+      run: |
+        curl -L -o opa https://openpolicyagent.org/downloads/latest/opa_linux_amd64
+        chmod +x opa
+        sudo mv opa /usr/local/bin/
+
+    - name: Run OPA Policy Check
+      run: |
+        opa eval -d opa/policy.rego "data.security.allow" \
+        --input opa/input.json
+
+    #############################################
+    # Pipeline Result Gate
+    #############################################
+    - name: Security Gate
+      run: echo "All security scans completed successfully"
+    - name: Upload Security Scan Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+       name: security-reports
+       path: scans/
