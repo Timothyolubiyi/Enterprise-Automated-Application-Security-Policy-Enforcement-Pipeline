@@ -66,7 +66,7 @@ variable "public_az" {
 
   type = string
 
-  default = "eu-west-1a"
+  default = "eu-north-1a"
 
 }
 
@@ -74,7 +74,7 @@ variable "private_az1" {
 
   type = string
 
-  default = "eu-west-1b"
+  default = "eu-north-1b"
 
 }
 
@@ -82,15 +82,27 @@ variable "private_az2" {
 
   type = string
 
-  default = "eu-west-1c"
+  default = "eu-north-1c"
 
 }
 
 
-variable "cloudwatch" {
-  type = string
+variable "enable_cloudwatch" {
+  type    = bool
+  default = true
 }
 
 variable "cloudtrail_bucket_name" {
   type = string
+
+}
+
+variable "eks_version" {
+  type    = string
+  default = "1.29"
+}
+
+variable "cluster_name" {
+  type    = string
+  default = "enterprise-devsecops"
 }

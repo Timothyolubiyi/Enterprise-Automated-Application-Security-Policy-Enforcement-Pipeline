@@ -16,62 +16,73 @@ resource "aws_iam_openid_connect_provider" "github" {
 }
 
 ############################################
-# GitHub Assume Role Policy
+# GitHub Actions OIDC Role
 ############################################
 
 data "aws_iam_policy_document" "github_assume_role" {
-
   statement {
-
-    effect = "Allow"
-
-    actions = [
-      "sts:AssumeRoleWithWebIdentity"
-    ]
+    effect  = "Allow"
 
     principals {
-
-      type = "Federated"
-
-      identifiers = [
-        aws_iam_openid_connect_provider.github.arn
-      ]
+      type        = "Federated"
+      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/token.actions.githubusercontent.com"]
     }
 
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+
     condition {
-
-      test = "StringEquals"
-
+      test     = "StringEquals"
       variable = "token.actions.githubusercontent.com:aud"
-
-      values = [
-        "sts.amazonaws.com"
-      ]
+      values   = ["sts.amazonaws.com"]
     }
-
-    condition {
-
-      test = "StringLike"
-
-      variable = "token.actions.githubusercontent.com:sub"
-
-      values = [
-        "repo:${var.github_owner}/${var.github_repo}:*"
-      ]
-    }
-
   }
+}
 
+data "aws_caller_identity" "current" {}
+
+resource "aws_iam_role" "github_actions" {
+  name               = "GitHubActionsOIDCRole"
+  assume_role_policy = data.aws_iam_policy_document.github_assume_role.json
 }
 
 ############################################
-# GitHub Actions Role
+# EC2 Instance Role
 ############################################
 
-resource "aws_iam_role" "github_actions" {
+resource "aws_iam_role" "ec2_role" {
+  name = "ec2-instance-role"
 
-  name = "GitHubActionsOIDCRole"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Principal = {
+        Service = "ec2.amazonaws.com"
+      }
+      Action = "sts:AssumeRole"
+    }]
+  })
+}
 
-  assume_role_policy = data.aws_iam_policy_document.github_assume_role.json
+############################################
+# EC2 Instance Profile
+############################################
 
+resource "aws_iam_instance_profile" "ec2_profile" {
+  name = "ec2-instance-profile"
+  role = aws_iam_role.ec2_role.name
+}
+
+############################################
+# Basic Policies (optional but recommended)
+############################################
+
+resource "aws_iam_role_policy_attachment" "ec2_ssm" {
+  role       = aws_iam_role.ec2_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
+resource "aws_iam_role_policy_attachment" "ec2_ecr_read" {
+  role       = aws_iam_role.ec2_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 }

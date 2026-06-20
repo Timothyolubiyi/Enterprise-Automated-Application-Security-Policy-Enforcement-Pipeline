@@ -18,6 +18,6 @@ output "repository_name" {
 
 output "repository_kms_key_id" {
 
-  value = aws_ecr_repository.repository.var
+  value = aws_ecr_repository.repository.arn
 
 }

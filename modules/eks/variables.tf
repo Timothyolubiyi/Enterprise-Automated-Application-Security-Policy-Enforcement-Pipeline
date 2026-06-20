@@ -10,14 +10,16 @@ variable "eks_version" {
 
 }
 
-variable "private_subnets" {
-
-  type = list(string)
-
-}
-
 variable "kms_key_arn" {
 
   type = string
 
+}
+
+variable "cluster_role_arn" {
+  type = string
+}
+
+variable "subnet_ids" {
+  type = list(string)
 }

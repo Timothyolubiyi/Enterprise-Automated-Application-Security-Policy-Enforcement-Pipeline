@@ -1,4 +1,4 @@
-resource "aws_kms_key" "enterprise_key" {
+resource "aws_kms_key" "this" {
 
   description = "Enterprise DevSecOps KMS Key"
 
@@ -20,6 +20,6 @@ resource "aws_kms_alias" "alias" {
 
   name = "alias/enterprise-devsecops"
 
-  target_key_id = aws_kms_key.enterprise_key.key_id
+  target_key_id = aws_kms_key.this.key_id
 
 }

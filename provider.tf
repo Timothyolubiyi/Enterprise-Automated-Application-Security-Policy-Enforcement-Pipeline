@@ -6,7 +6,7 @@ terraform {
 
     aws = {
 
-      source  = "hashicorp/aws"
+      source = "hashicorp/aws"
 
       version = "~> 6.0"
 
@@ -16,14 +16,15 @@ terraform {
 
 }
 
+
 provider "aws" {
   region = var.aws_region
-}
 
-resource "aws_default_tags" "this" {
-  tags = {
-    Project     = var.project_name
-    Environment = var.environment
-    ManagedBy   = "Terraform"
+  default_tags {
+    tags = {
+      Project     = var.project_name
+      Environment = var.environment
+      ManagedBy   = "Terraform"
+    }
   }
 }

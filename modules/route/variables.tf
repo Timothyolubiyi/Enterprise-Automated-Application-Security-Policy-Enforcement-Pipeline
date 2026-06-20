@@ -1,11 +1,19 @@
-variable "vpc_id" {}
+variable "vpc_id" {
+  type = string
+}
 
-variable "igw" {}
+variable "igw_id" {
+  type = string
+}
 
-variable "nat" {}
+variable "nat_gateway_id" {
+  type = string
+}
 
-variable "public_subnet" {}
+variable "public_subnet_ids" {
+  type = list(string)
+}
 
-variable "private1" {}
-
-variable "private2" {}
+variable "private_subnet_ids" {
+  type = list(string)
+}

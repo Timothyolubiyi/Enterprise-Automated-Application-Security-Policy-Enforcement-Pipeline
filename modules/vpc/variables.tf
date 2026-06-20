@@ -1,25 +1,8 @@
-variable "vpc_id" {
-  type = string
+variable "vpc_cidr" {}
+variable "environment" {}
+variable "subnet_cidrs" {
+  type = list(string)
 }
-
-variable "cidr_block" {
-  type = string
-}
-
-variable "availability_zone" {
-  type = string
-}
-
-variable "environment" {
-
-  type = string
-
-}
-
-variable "log_group_name" {
-
-  description = "CloudWatch Log Group Name"
-
-  type = string
-
+variable "availability_zones" {
+  type = list(string)
 }

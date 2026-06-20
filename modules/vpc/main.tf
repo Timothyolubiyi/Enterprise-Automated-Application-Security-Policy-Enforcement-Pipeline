@@ -1,9 +1,13 @@
-resource "aws_vpc" "main" {
-  cidr_block = var.cidr
+resource "aws_vpc" "this" {
+  cidr_block = var.vpc_cidr
 }
 
 resource "aws_internet_gateway" "this" {
-  vpc_id = var.vpc_id
+  vpc_id = aws_vpc.this.id
+
+  tags = {
+    Name = "${var.environment}-igw"
+  }
 }
 
 resource "aws_eip" "nat" {
@@ -12,9 +16,11 @@ resource "aws_eip" "nat" {
 
 resource "aws_nat_gateway" "this" {
   allocation_id = aws_eip.nat.id
-  subnet_id     = var.public_subnet_id
+  subnet_id = aws_subnet.this[0].id
 
-  depends_on = [var.igw_id]
+  depends_on = [
+  aws_internet_gateway.this
+]
 
   tags = {
     Name = "nat-gateway"
@@ -22,20 +28,29 @@ resource "aws_nat_gateway" "this" {
 }
 
 resource "aws_route_table" "this" {
-  vpc_id = var.vpc_id
+  vpc_id = aws_vpc.this.id
 }
 
 resource "aws_subnet" "this" {
-  vpc_id            = var.vpc_id
-  cidr_block        = var.cidr_block
-  availability_zone = var.availability_zone
+
+  count = length(var.subnet_cidrs)
+
+  vpc_id = aws_vpc.this.id
+
+  cidr_block = var.subnet_cidrs[count.index]
+
+  availability_zone = element(var.availability_zones, count.index)
 
   map_public_ip_on_launch = true
+
+  tags = {
+    Name = "subnet-${count.index}"
+  }
 }
 
 resource "aws_security_group" "this" {
   name   = "app-sg"
-  vpc_id = var.vpc_id
+  vpc_id = aws_vpc.this.id
 }
 
 
@@ -117,16 +132,22 @@ resource "aws_iam_role_policy" "flow_logs" {
 # VPC Flow Logs
 #############################################
 
-resource "aws_flow_log" "vpc_flow_logs" {
+resource "aws_flow_log" "this" {
 
-  vpc_id = aws_vpc.main.id
+  iam_role_arn = aws_iam_role.flow_logs.arn
+
+  log_destination = aws_cloudwatch_log_group.vpc_flow.arn
 
   traffic_type = "ALL"
 
-  log_destination_type = "cloud-watch-logs"
+  vpc_id = aws_vpc.this.id
 
-  log_group_name = var.log_group_name
+}
 
-  iam_role_arn = aws_iam_role.flow_logs.arn
+resource "aws_cloudwatch_log_group" "vpc_flow" {
+
+  name = "/aws/vpc/flowlogs"
+
+  retention_in_days = 30
 
 }

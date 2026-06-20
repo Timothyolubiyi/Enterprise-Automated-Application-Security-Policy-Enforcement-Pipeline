@@ -7,19 +7,11 @@ output "vpc_id" {
 }
 
 output "public_subnet_id" {
-
-  description = "Public Subnet"
-
-  value = module.subnet.public_subnet
-
+  value = module.subnet.public_subnet_id
 }
 
-output "private_subnet1_id" {
-
-  description = "Private Subnet 1"
-
-  value = module.subnet.private_subnet1
-
+output "private_subnet_ids" {
+  value = module.subnet.private_subnet_ids
 }
 
 output "private_subnet2_id" {
@@ -49,9 +41,7 @@ output "security_group_id" {
 }
 
 output "github_oidc_role" {
-
-  value = module.iam.github_role_arn
-
+  value = module.iam.github_actions_role_arn
 }
 
 output "secret_arn" {
