@@ -30,7 +30,7 @@ data "aws_iam_policy_document" "github_assume_role" {
 
     condition {
       test     = "StringLike"
-      variable = "token.actions.githubusercontent.com:sub"
+      variable = "token.actions.githubusercontent.com:sub:repo:https://github.com/Timothyolubiyi/Enterprise-Automated-Application-Security-Policy-Enforcement-Pipeline.git:*"
       values   = ["repo:*:*"]
     }
   }
