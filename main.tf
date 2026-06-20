@@ -68,8 +68,8 @@ module "route" {
   nat_gateway_id = module.nat.nat_id
 
   public_subnet_ids = [
-  module.subnet.public_subnet
-]
+    module.subnet.public_subnet
+  ]
   private_subnet_ids = module.subnet.private_subnet_ids
 }
 

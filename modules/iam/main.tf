@@ -1,31 +1,23 @@
 ############################################
-# GitHub OIDC Provider
+# AWS Account Identity
 ############################################
 
-resource "aws_iam_openid_connect_provider" "github" {
-
-  url = "https://token.actions.githubusercontent.com"
-
-  client_id_list = [
-    "sts.amazonaws.com"
-  ]
-
-  thumbprint_list = [
-    "6938fd4d98bab03faadb97b34396831e3780aea1"
-  ]
-}
+data "aws_caller_identity" "current" {}
 
 ############################################
 # GitHub Actions OIDC Role
 ############################################
 
 data "aws_iam_policy_document" "github_assume_role" {
+
   statement {
-    effect  = "Allow"
+    effect = "Allow"
 
     principals {
       type        = "Federated"
-      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/token.actions.githubusercontent.com"]
+      identifiers = [
+        "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/token.actions.githubusercontent.com"
+      ]
     }
 
     actions = ["sts:AssumeRoleWithWebIdentity"]
@@ -35,10 +27,14 @@ data "aws_iam_policy_document" "github_assume_role" {
       variable = "token.actions.githubusercontent.com:aud"
       values   = ["sts.amazonaws.com"]
     }
+
+    condition {
+      test     = "StringLike"
+      variable = "token.actions.githubusercontent.com:sub"
+      values   = ["repo:*:*"]
+    }
   }
 }
-
-data "aws_caller_identity" "current" {}
 
 resource "aws_iam_role" "github_actions" {
   name               = "GitHubActionsOIDCRole"
@@ -46,7 +42,7 @@ resource "aws_iam_role" "github_actions" {
 }
 
 ############################################
-# EC2 Instance Role
+# EC2 Role
 ############################################
 
 resource "aws_iam_role" "ec2_role" {
@@ -64,25 +60,27 @@ resource "aws_iam_role" "ec2_role" {
   })
 }
 
-############################################
-# EC2 Instance Profile
-############################################
-
 resource "aws_iam_instance_profile" "ec2_profile" {
   name = "ec2-instance-profile"
   role = aws_iam_role.ec2_role.name
 }
 
-############################################
-# Basic Policies (optional but recommended)
-############################################
+resource "aws_iam_role" "eks_cluster" {
+  name = "eks-cluster-role"
 
-resource "aws_iam_role_policy_attachment" "ec2_ssm" {
-  role       = aws_iam_role.ec2_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Principal = {
+        Service = "eks.amazonaws.com"
+      }
+      Action = "sts:AssumeRole"
+    }]
+  })
 }
 
-resource "aws_iam_role_policy_attachment" "ec2_ecr_read" {
-  role       = aws_iam_role.ec2_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+resource "aws_iam_role_policy_attachment" "eks_cluster_policy" {
+  role       = aws_iam_role.eks_cluster.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
 }

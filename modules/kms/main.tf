@@ -1,19 +1,42 @@
+data "aws_caller_identity" "current" {}
+
 resource "aws_kms_key" "this" {
-
-  description = "Enterprise DevSecOps KMS Key"
-
-  deletion_window_in_days = 30
-
+  description         = "devsecops key"
   enable_key_rotation = true
 
-  tags = {
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "EnableIAMUserPermissions"
+        Effect = "Allow"
 
-    Name = "Enterprise-KMS"
+        Principal = {
+          AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
+        }
 
-    Environment = var.environment
+        Action   = "kms:*"
+        Resource = "*"
+      },
+      {
+        Sid    = "AllowCloudWatchLogs"
+        Effect = "Allow"
 
-  }
+        Principal = {
+          Service = "logs.amazonaws.com"
+        }
 
+        Action = [
+          "kms:Encrypt",
+          "kms:Decrypt",
+          "kms:GenerateDataKey",
+          "kms:DescribeKey"
+        ]
+
+        Resource = "*"
+      }
+    ]
+  })
 }
 
 resource "aws_kms_alias" "alias" {
