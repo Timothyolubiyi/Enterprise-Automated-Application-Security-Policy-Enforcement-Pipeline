@@ -1,7 +1,11 @@
 # ---------------------------------------------
 # Base Image (Lightweight & Secure)
 # ---------------------------------------------
-FROM node:20-alpine AS base
+FROM node:20.19-alpine3.22 AS build
+RUN apk upgrade --no-cache
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+USER appuser
+# build steps
 
 # Create app directory
 WORKDIR /app
@@ -30,8 +34,10 @@ RUN npm run build
 # ---------------------------------------------
 # Production image
 # ---------------------------------------------
-FROM node:20-alpine AS runner
-
+FROM node:20.19-alpine3.22 AS runner
+RUN apk upgrade --no-cache
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+USER appuser
 WORKDIR /app
 
 # Create non-root user (security best practice)
