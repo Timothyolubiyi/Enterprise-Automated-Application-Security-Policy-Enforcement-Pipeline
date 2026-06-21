@@ -45,7 +45,7 @@ jobs:
     - name: Run Checkov IaC Scan
       uses: bridgecrewio/checkov-action@master
       with:
-        directory: docker
+        directory: /Dockerfile
         framework: terraform
 
     #############################################
@@ -61,7 +61,7 @@ jobs:
     # Build Docker Image (for Trivy scan)
     #############################################
     - name: Build Docker Image
-      run: docker build -t enterprise-app:latest .
+      run: docker build -t enterprise-app:latest -f app/Dockerfile app
 
     #############################################
     # Trivy - Container Scan
