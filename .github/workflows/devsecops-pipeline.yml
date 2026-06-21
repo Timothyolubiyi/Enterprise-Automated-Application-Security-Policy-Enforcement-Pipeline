@@ -39,14 +39,12 @@ jobs:
       env:
         GITLEAKS_ENABLE_COMMENTS: false
 
-    #############################################
-    # Checkov - Terraform/IaC Security Scan
-    #############################################
     - name: Run Checkov IaC Scan
       uses: bridgecrewio/checkov-action@master
       with:
-        directory: /Dockerfile
+        directory: terraform
         framework: terraform
+        output_format: sarif
 
     #############################################
     # Trivy - Filesystem Scan
