@@ -1,8 +1,8 @@
 resource "aws_cloudtrail" "this" {
 
-  name                          = var.trail_name
-  s3_bucket_name                = var.s3_bucket_name
-  kms_key_id                    = var.kms_key_arn
+  name           = var.trail_name
+  s3_bucket_name = var.s3_bucket_name
+  kms_key_id     = var.kms_key_arn
 
   enable_logging                = true
   is_multi_region_trail         = true
@@ -66,11 +66,11 @@ resource "aws_iam_role_policy" "cloudtrail_policy" {
         Effect = "Allow"
 
         Action = [
-                "logs:CreateLogStream",
-                "logs:PutLogEvents",
-                "logs:DescribeLogGroups",
-                "logs:DescribeLogStreams"
-            ]
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+          "logs:DescribeLogGroups",
+          "logs:DescribeLogStreams"
+        ]
 
         Resource = "*"
 

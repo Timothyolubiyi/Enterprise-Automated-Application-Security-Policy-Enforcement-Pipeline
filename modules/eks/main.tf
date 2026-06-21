@@ -120,7 +120,7 @@ resource "aws_iam_role_policy_attachment" "worker3" {
 
 resource "aws_eks_node_group" "nodes" {
 
-  cluster_name   = aws_eks_cluster.this.name
+  cluster_name = aws_eks_cluster.this.name
 
   node_group_name = "managed-workers"
 

@@ -16,11 +16,11 @@ resource "aws_eip" "nat" {
 
 resource "aws_nat_gateway" "this" {
   allocation_id = aws_eip.nat.id
-  subnet_id = aws_subnet.this[0].id
+  subnet_id     = aws_subnet.this[0].id
 
   depends_on = [
-  aws_internet_gateway.this
-]
+    aws_internet_gateway.this
+  ]
 
   tags = {
     Name = "nat-gateway"

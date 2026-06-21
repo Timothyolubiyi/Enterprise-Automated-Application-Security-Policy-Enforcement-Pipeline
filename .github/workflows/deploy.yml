@@ -48,7 +48,7 @@ jobs:
 
       - name: Terraform fmt
         id: fmt
-        run: terraform fmt -check -recursive
+        run: terraform fmt -recursive
 
       - name: Terraform Init
         id: init

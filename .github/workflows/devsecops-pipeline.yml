@@ -54,6 +54,12 @@ jobs:
       with:
         scan-type: fs
         scan-ref: .
+    
+    - name: Run Trivy Scan
+      run: trivy fs /app
+
+    - name: Cleanup artifacts
+      run: rm -f trivy_envs.txt
 
     #############################################
     # Build Docker Image (for Trivy scan)
