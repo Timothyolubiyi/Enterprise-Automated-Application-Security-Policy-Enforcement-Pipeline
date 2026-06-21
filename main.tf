@@ -134,7 +134,7 @@ module "secretsmanager" {
   kms_key_arn = module.kms.kms_key_arn
 
   username = "admin"
-  password = "admin123"
+  password = var.db_password
 }
 
 #############################################

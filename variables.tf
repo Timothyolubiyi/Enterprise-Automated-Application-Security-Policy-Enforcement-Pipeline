@@ -106,3 +106,7 @@ variable "cluster_name" {
   type    = string
   default = "enterprise-devsecops"
 }
+
+variable "db_password" {
+  sensitive = true
+}
