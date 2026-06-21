@@ -45,7 +45,7 @@ jobs:
     - name: Run Checkov IaC Scan
       uses: bridgecrewio/checkov-action@master
       with:
-        directory: enterprise-devsecops
+        directory: docker
         framework: terraform
 
     #############################################
