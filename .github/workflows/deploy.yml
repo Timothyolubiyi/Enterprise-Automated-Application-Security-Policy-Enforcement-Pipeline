@@ -31,7 +31,7 @@ jobs:
 
     steps:
 
-      - name: Checkout
+      - name: Checkout repo
         uses: actions/checkout@v4
 
       - name: Configure AWS Credentials
@@ -43,12 +43,34 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.0.0
+          
+         terraform_version: 1.7.0
+
+      - name: Terraform fmt
+        id: fmt
+        run: terraform fmt -check -recursive
+
       - name: Terraform Init
-        run: terraform init
+        id: init
+      
+        run: 
+          terraform init -upgrade
+        
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color 
 
       - name: Terraform Plan
-        run: terraform plan
+        id: plan
+        run: terraform plan -out=tfplan -no-color
 
       - name: Terraform Apply
+        id: apply 
+        if: ${{ github.event.inputs.terraform_action == 'apply' }}
         run: terraform apply -auto-approve
+      
+      - name: Terraform destroy
+        id: destroy 
+        if: ${{ github.event.inputs.terraform_action == 'destroy' }}
+        run: terraform destroy -auto-approve
+        #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
