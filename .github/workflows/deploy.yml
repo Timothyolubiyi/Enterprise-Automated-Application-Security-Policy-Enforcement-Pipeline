@@ -19,9 +19,10 @@ on:
       - main
 
 permissions:
-  id-token: write
-  contents: read
-
+      id-token: write # for aws oidc connection
+      contents: read   # for actions/checkout
+      pull-requests: write # for GitHub bot to comment PR
+      
 jobs:
 
   terraform:
@@ -34,9 +35,10 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v3
         with:
-          role-to-assume: arn:aws:iam::123456789012:role/GitHubActionsOIDCRole
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-north-1
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
