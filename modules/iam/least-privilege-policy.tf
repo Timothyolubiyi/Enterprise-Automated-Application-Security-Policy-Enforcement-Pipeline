@@ -35,7 +35,9 @@ resource "aws_iam_policy" "github_policy" {
 
         ]
 
-        Resource = "*"
+        Resource = [
+          "${aws_cloudwatch_log_group.trail.arn}:*"
+        ]
 
       }
 

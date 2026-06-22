@@ -3,6 +3,7 @@ resource "aws_cloudtrail" "this" {
   name           = var.trail_name
   s3_bucket_name = var.s3_bucket_name
   kms_key_id     = var.kms_key_arn
+  sns_topic_name = aws_sns_topic.cloudtrail_alerts.name
 
   enable_logging                = true
   is_multi_region_trail         = true

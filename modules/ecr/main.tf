@@ -12,6 +12,11 @@ resource "aws_ecr_repository" "repository" {
     scan_on_push = true
   }
 
+  encryption_configuration {
+  encryption_type = "KMS"
+  kms_key         = var.kms_key_arn
+}
+
   tags = {
 
     Name        = var.repository_name

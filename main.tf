@@ -205,3 +205,9 @@ module "cloudwatch" {
 
   kms_key_arn = module.kms.kms_key_arn
 }
+
+module "ecr" {
+  source = "./modules/ecr"
+
+  kms_key_arn = module.kms.kms_key_arn
+}

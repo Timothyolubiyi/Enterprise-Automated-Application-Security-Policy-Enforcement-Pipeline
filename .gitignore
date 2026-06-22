@@ -43,7 +43,7 @@ Thumbs.db
 *.log
 
 # Security scan reports
-scans/
+#scans/
 
 # Python
 __pycache__/

@@ -92,6 +92,16 @@ variable "enable_cloudwatch" {
   default = true
 }
 
+############################################
+# CloudWatch retention
+############################################
+
+variable "retention_days" {
+  description = "CloudWatch log retention"
+  type        = number
+  default     = 365
+}
+
 variable "cloudtrail_bucket_name" {
   type = string
 
@@ -109,4 +119,69 @@ variable "cluster_name" {
 
 variable "db_password" {
   sensitive = true
+}
+
+############################################
+# DynamoDB
+############################################
+
+variable "dynamodb_table_name" {
+  description = "Terraform state lock table"
+  type        = string
+  default     = "terraform-locks"
+}
+
+
+############################################
+# EC2 / Wazuh
+############################################
+
+variable "instance_type" {
+  description = "EC2 instance type"
+  type        = string
+  default     = "t3.large"
+}
+
+############################################
+# CloudTrail
+############################################
+
+variable "trail_name" {
+  description = "CloudTrail name"
+  type        = string
+  default     = "enterprise-cloudtrail"
+}
+
+############################################
+# S3 Backend
+############################################
+
+variable "terraform_state_bucket" {
+  description = "Terraform state bucket"
+  type        = string
+}
+
+############################################
+# ECR
+############################################
+
+variable "repository_name" {
+  description = "ECR Repository Name"
+  type        = string
+  default     = "enterprise-devsecops"
+}
+
+############################################
+# Tags
+############################################
+
+variable "tags" {
+  description = "Common tags"
+  type        = map(string)
+
+  default = {
+    Project     = "Enterprise-DevSecOps"
+    ManagedBy   = "Terraform"
+    Environment = "dev"
+  }
 }

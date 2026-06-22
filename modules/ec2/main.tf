@@ -26,6 +26,14 @@ resource "aws_instance" "wazuh" {
 
   instance_type = var.instance_type
 
+  monitoring    = true
+  ebs_optimized = true
+
+  metadata_options {
+  http_endpoint = "enabled"
+  http_tokens   = "required"
+}
+
   subnet_id = var.private_subnet
 
   user_data = file("${path.root}/scripts/bootstrap.sh")
@@ -33,6 +41,7 @@ resource "aws_instance" "wazuh" {
   vpc_security_group_ids = [
 
     var.security_group
+    
 
   ]
 
