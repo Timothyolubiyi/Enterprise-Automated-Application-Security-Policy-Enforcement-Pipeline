@@ -46,6 +46,20 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-north-1
+      - name: Debug IAM files
+        run: |
+          echo "Current commit:"
+          git rev-parse HEAD
+
+          echo "Searching for github_actions role..."
+          grep -R 'resource "aws_iam_role" "github_actions"' modules/iam || true
+
+          echo "least-privilege-policy.tf"
+          cat modules/iam/least-privilege-policy.tf
+
+          echo "outputs.tf"
+          cat modules/iam/outputs.tf
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
