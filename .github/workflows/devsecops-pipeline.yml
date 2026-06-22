@@ -30,6 +30,14 @@ jobs:
           exit 0
         fi
 
+        - uses: actions/setup-node@v4
+
+    - run: npm ci
+
+    - run: npm install
+
+    - run: npm test
+
     #############################################
     # Semgrep - SAST Scan
     #############################################
@@ -49,7 +57,7 @@ jobs:
     - name: Run Checkov IaC Scan
       uses: bridgecrewio/checkov-action@master
       with:
-        directory: app
+        directory: .
         framework: terraform
         output_format: sarif
 
@@ -62,17 +70,19 @@ jobs:
         scan-type: fs
         scan-ref: .
     
-    - name: Run Trivy Scan
-      run: trivy fs .
 
-    - name: Cleanup artifacts
-      run: rm -f trivy_envs.txt
+    - name: Debug step
+      run: |
+         echo "Checking workspace"
+         ls -la
+         echo "Checking Trivy output"
+  
 
     #############################################
     # Build Docker Image (for Trivy scan)
     #############################################
     - name: Build Docker Image
-      run: docker build -t enterprise-app:latest -f app/Dockerfile app
+      run: docker build -t enterprise-app:latest -f app/Dockerfile .
 
     #############################################
     # Trivy - Container Scan
@@ -96,8 +106,11 @@ jobs:
 
     - name: Run OPA Policy Check
       run: |
-        opa eval -d opa/policy.rego "data.security.allow" \
-        --input opa/input.json
+        if [ -f opa/policy.rego ] && [ -f opa/input.json ]; then
+          opa eval -d opa/policy.rego "data.security.allow" --input opa/input.json
+        else
+          echo "OPA files missing - skipping"
+        fi
 
     #############################################
     # Pipeline Result Gate

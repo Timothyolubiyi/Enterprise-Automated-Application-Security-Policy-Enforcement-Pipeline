@@ -34,6 +34,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Show repository contents
+        run: |
+          pwd
+          ls -la
+          find . -name package.json
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v3
         with:
@@ -44,7 +50,7 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         with:
           
-         terraform_version: 1.6.6
+         terraform_version: 1.7.5
 
       - name: Terraform fmt
         id: fmt
