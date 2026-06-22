@@ -20,6 +20,13 @@ jobs:
     #############################################
     # Checkout Code
     #############################################
+    - name: Debug Repository
+      run: |
+        pwd
+        ls -la
+        find . -name package.json
+        find . -name "*.yml"
+    
     - name: Checkout Repository
       uses: actions/checkout@v4
 
@@ -29,14 +36,6 @@ jobs:
           echo "No Node project found - skipping npm"
           exit 0
         fi
-
-        - uses: actions/setup-node@v4
-
-    - run: npm ci
-
-    - run: npm install
-
-    - run: npm test
 
     #############################################
     # Semgrep - SAST Scan

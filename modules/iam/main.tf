@@ -64,6 +64,16 @@ resource "aws_iam_openid_connect_provider" "github" {
   ]
 }
 
+resource "aws_iam_role" "github_actions" {
+  name = "github-actions-role"
+
+  assume_role_policy = data.aws_iam_policy_document.github_assume_role.json
+
+  tags = {
+    Name = "GitHub Actions OIDC Role"
+  }
+}
+
 ############################################
 # EC2 Role
 ############################################
