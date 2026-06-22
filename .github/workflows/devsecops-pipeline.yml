@@ -30,13 +30,6 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v4
 
-    - name: Check package.json exists
-      run: |
-        if [ ! -f package.json ]; then
-          echo "No Node project found - skipping npm"
-          exit 0
-        fi
-
     #############################################
     # Semgrep - SAST Scan
     #############################################
