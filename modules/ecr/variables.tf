@@ -1,9 +1,7 @@
 variable "repository_name" {
-
-  description = "ECR Repository Name"
-
-  type = string
-
+  description = "ECR repository name"
+  type        = string
+  default     = "enterprise-devsecops"
 }
 
 variable "environment" {

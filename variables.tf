@@ -126,7 +126,7 @@ variable "db_password" {
 ############################################
 
 variable "dynamodb_table_name" {
-  description = "Terraform state lock table"
+  description = "Terraform state lock table name"
   type        = string
   default     = "terraform-locks"
 }
@@ -184,4 +184,10 @@ variable "tags" {
     ManagedBy   = "Terraform"
     Environment = "dev"
   }
+}
+
+variable "repository_name" {
+  description = "ECR repository name"
+  type        = string
+  default     = "enterprise-devsecops"
 }

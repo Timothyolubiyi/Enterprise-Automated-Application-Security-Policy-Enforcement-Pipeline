@@ -143,7 +143,7 @@ module "secretsmanager" {
 module "ecr" {
   source = "./modules/ecr"
 
-  repository_name = "enterprise-devsecops-app"
+  repository_name = "enterprise-devsecops"
   environment     = var.environment
 }
 
@@ -202,12 +202,6 @@ module "cloudwatch" {
   log_group_name = "/aws/enterprise/devsecops"
 
   environment = var.environment
-
-  kms_key_arn = module.kms.kms_key_arn
-}
-
-module "ecr" {
-  source = "./modules/ecr"
 
   kms_key_arn = module.kms.kms_key_arn
 }
