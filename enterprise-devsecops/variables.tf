@@ -126,7 +126,7 @@ variable "db_password" {
 ############################################
 
 variable "dynamodb_table_name" {
-  description = "Terraform state lock table"
+  description = "Terraform state lock table name"
   type        = string
   default     = "terraform-locks"
 }
