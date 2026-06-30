@@ -109,6 +109,7 @@ module "dynamodb" {
   source = "./modules/dynamodb"
 
   table_name = "terraform-state-lock"
+  kms_key_arn = module.kms.kms_key_arn
 }
 
 #############################################
