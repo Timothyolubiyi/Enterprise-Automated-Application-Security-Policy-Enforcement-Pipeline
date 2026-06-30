@@ -103,30 +103,30 @@ resource "aws_s3_bucket_lifecycle_configuration" "this" {
 }
 
 # Add cross-region replication (CKV_AWS_144)
-resource "aws_s3_bucket_replication_configuration" "this" {
-  bucket = aws_s3_bucket.terraform_state.id
+#resource "aws_s3_bucket_replication_configuration" "this" {
+#  bucket = aws_s3_bucket.terraform_state.id
 
-  role = aws_iam_role.replication.arn
+#  role = aws_iam_role.replication.arn
 
-  rule {
-    id     = "replicate-terraform-state"
-    status = "Enabled"
+#  rule {
+#    id     = "replicate-terraform-state"
+#    status = "Enabled"
 
-    destination {
-      bucket = "enterprise-devsecops-tfstate"
+#    destination {
+#      bucket = "enterprise-devsecops-tfstate"
 
-      replication_time {
-        status = "Enabled"
-        time {
-          minutes = 15
-        }
-      }
-    }
-  }
-}
+#      replication_time {
+#        status = "Enabled"
+#        time {
+#          minutes = 15
+#        }
+#      }
+#    }
+#  }
+#}
 
 # Add event notifications (CKV2_AWS_62)
 resource "aws_s3_bucket_notification" "this" {
   bucket = aws_s3_bucket.terraform_state.id
-  eventbridge {}
+  eventbridge = true
 }
