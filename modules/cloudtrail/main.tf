@@ -87,4 +87,8 @@ resource "aws_cloudwatch_log_group" "trail" {
   }
 }
 
+resource "aws_sns_topic" "cloudtrail_alerts" {
+  name = "cloudtrail-alerts"
 
+  kms_master_key_id = var.kms_key_arn
+}

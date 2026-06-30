@@ -128,6 +128,5 @@ resource "aws_s3_bucket_replication_configuration" "this" {
 # Add event notifications (CKV2_AWS_62)
 resource "aws_s3_bucket_notification" "this" {
   bucket = aws_s3_bucket.terraform_state.id
-
   eventbridge {}
 }

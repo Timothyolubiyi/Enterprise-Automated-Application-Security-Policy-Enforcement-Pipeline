@@ -70,6 +70,25 @@ resource "aws_default_security_group" "this" {
 # IAM Role for VPC Flow Logs
 #############################################
 
+resource "aws_iam_role" "flow_logs" {
+  name = "${var.environment}-flowlogs-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+
+    Statement = [{
+      Effect = "Allow"
+
+      Principal = {
+        Service = "vpc-flow-logs.amazonaws.com"
+      }
+
+      Action = "sts:AssumeRole"
+    }]
+  })
+}
+
+
 resource "aws_iam_role_policy" "flow_logs" {
   name = "${var.environment}-flowlogs-policy"
   role = aws_iam_role.flow_logs.id
@@ -103,10 +122,11 @@ resource "aws_flow_log" "this" {
 
   log_destination = aws_cloudwatch_log_group.vpc_flow.arn
 
+  log_destination_type = "cloud-watch-logs"
+
   traffic_type = "ALL"
 
   vpc_id = aws_vpc.this.id
-
 }
 
 resource "aws_cloudwatch_log_group" "vpc_flow" {

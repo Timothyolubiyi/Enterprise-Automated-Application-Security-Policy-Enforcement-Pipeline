@@ -122,6 +122,7 @@ module "iam" {
 
   github_owner = "your-github-username"
   github_repo  = "enterprise-devsecops"
+  cloudwatch_log_group_arn = module.cloudwatch.log_group_arn
 }
 
 #############################################

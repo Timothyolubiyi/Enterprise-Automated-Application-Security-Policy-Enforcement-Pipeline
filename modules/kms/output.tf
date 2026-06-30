@@ -5,5 +5,7 @@ output "kms_key_id" {
 }
 
 output "kms_key_arn" {
+  description = "KMS Key ARN"
+
   value = aws_kms_key.this.arn
 }
