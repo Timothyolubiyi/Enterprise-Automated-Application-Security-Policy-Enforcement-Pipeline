@@ -159,6 +159,7 @@ variable "trail_name" {
 variable "terraform_state_bucket" {
   description = "Terraform state bucket"
   type        = string
+  default     = "enterprise-devsecops-tfstate"
 }
 
 ############################################
