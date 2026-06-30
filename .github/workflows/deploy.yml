@@ -40,6 +40,11 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-north-1
+        env:
+          AWS_DEFAULT_REGION: eu-north-1
+          TF_VAR_cloudtrail_bucket_name: ${{ secrets.TF_VAR_cloudtrail_bucket_name }}
+          TF_VAR_db_password: ${{ secrets.TF_VAR_db_password }}
+
       - name: Debug IAM files
         run: |
           echo "Current commit:"

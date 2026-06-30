@@ -102,10 +102,9 @@ variable "retention_days" {
   default     = 365
 }
 
-variable "cloudtrail_bucket_name" {
-  type = string
-
-}
+#variable "cloudtrail_bucket_name" {
+#  type = string
+#}
 
 variable "eks_version" {
   type    = string
