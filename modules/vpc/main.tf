@@ -53,39 +53,43 @@ resource "aws_security_group" "this" {
   vpc_id = aws_vpc.this.id
 }
 
+# Restrict default security group
+resource "aws_default_security_group" "this" {
+  vpc_id = aws_vpc.this.id
+
+  tags = {
+    Name = "default-sg-restricted"
+  }
+  # All ingress/egress rules are implicitly empty
+}
+
+# Attach security groups to resources (example for EKS)
+# Update your module calls to attach security groups to ENIs/instances
 
 #############################################
 # IAM Role for VPC Flow Logs
 #############################################
 
-resource "aws_iam_role" "flow_logs" {
+resource "aws_iam_role_policy" "flow_logs" {
+  name = "${var.environment}-flowlogs-policy"
+  role = aws_iam_role.flow_logs.id
 
-  name = "${var.environment}-vpc-flowlogs-role"
-
-  assume_role_policy = jsonencode({
-
+  policy = jsonencode({
     Version = "2012-10-17"
-
     Statement = [
-
       {
-
         Effect = "Allow"
-
-        Principal = {
-
-          Service = "vpc-flow-logs.amazonaws.com"
-
-        }
-
-        Action = "sts:AssumeRole"
-
+        Action = [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:DescribeLogGroups",
+          "logs:DescribeLogStreams",
+          "logs:PutLogEvents"
+        ]
+        Resource = "${aws_cloudwatch_log_group.vpc_flow.arn}:*"  # Specific resource
       }
-
     ]
-
   })
-
 }
 
 #############################################
@@ -145,9 +149,7 @@ resource "aws_flow_log" "this" {
 }
 
 resource "aws_cloudwatch_log_group" "vpc_flow" {
-
-  name = "/aws/vpc/flowlogs"
-
-  retention_in_days = 30
-
+  name              = "/aws/vpc/flowlogs"
+  retention_in_days = 365  # CKV_AWS_338: At least 1 year
+  kms_key_id        = var.kms_key_arn  # CKV_AWS_158: Encryption
 }

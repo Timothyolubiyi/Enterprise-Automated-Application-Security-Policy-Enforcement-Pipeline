@@ -88,3 +88,59 @@ resource "aws_s3_bucket_lifecycle_configuration" "this" {
     }
   }
 }
+
+# Add S3 access logging
+resource "aws_s3_bucket_logging" "terraform_state" {
+  bucket = aws_s3_bucket.terraform_state.id
+
+  target_bucket = "enterprise-devsecops-tfstate"
+  target_prefix = "s3-access-logs/"
+}
+
+# Add abort incomplete multipart uploads (CKV_AWS_300)
+resource "aws_s3_bucket_lifecycle_configuration" "this" {
+  bucket = aws_s3_bucket.terraform_state.id
+
+  rule {
+    id     = "state-management"
+    status = "Enabled"
+
+    noncurrent_version_expiration {
+      noncurrent_days = 30
+    }
+
+    abort_incomplete_multipart_upload {
+      days_after_initiation = 7  # CKV_AWS_300
+    }
+  }
+}
+
+# Add cross-region replication (CKV_AWS_144)
+resource "aws_s3_bucket_replication_configuration" "this" {
+  bucket = aws_s3_bucket.terraform_state.id
+
+  role = aws_iam_role.replication.arn
+
+  rule {
+    id     = "replicate-terraform-state"
+    status = "Enabled"
+
+    destination {
+      bucket = "enterprise-devsecops-tfstate"
+
+      replication_time {
+        status = "Enabled"
+        time {
+          minutes = 15
+        }
+      }
+    }
+  }
+}
+
+# Add event notifications (CKV2_AWS_62)
+resource "aws_s3_bucket_notification" "this" {
+  bucket = aws_s3_bucket.terraform_state.id
+
+  eventbridge {}
+}

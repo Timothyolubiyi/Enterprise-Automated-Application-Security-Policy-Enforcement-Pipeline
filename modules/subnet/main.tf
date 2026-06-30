@@ -1,17 +1,13 @@
 resource "aws_subnet" "public" {
-
-  vpc_id = var.vpc_id
-
-  cidr_block = var.public_cidr
-
+  vpc_id            = var.vpc_id
+  cidr_block        = var.public_cidr
   availability_zone = var.public_az
-
-  map_public_ip_on_launch = true
+  # Remove: map_public_ip_on_launch = true
+  # Or use: map_public_ip_on_launch = var.assign_public_ip  # default to false
 
   tags = {
     Name = "PublicSubnet"
   }
-
 }
 
 resource "aws_subnet" "private1" {

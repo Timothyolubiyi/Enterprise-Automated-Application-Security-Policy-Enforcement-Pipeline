@@ -38,7 +38,27 @@ resource "aws_eks_cluster" "this" {
 
   vpc_config {
     subnet_ids = var.subnet_ids
+    endpoint_private_access = true
+    endpoint_public_access  = false  # CKV_AWS_39: Disable public endpoint
+    public_access_cidrs     = []     # CKV_AWS_38: Restrict access
   }
+
+  enabled_cluster_log_types = [
+    "api",
+    "audit",
+    "authenticator",
+    "controllerManager",
+    "scheduler"
+  ]  # CKV_AWS_37: Enable all log types
+
+  encryption_config {
+    provider {
+      key_arn = var.kms_key_arn
+    }
+    resources = ["secrets"]  # CKV_AWS_58: Enable secrets encryption
+  }
+
+  depends_on = [aws_iam_role_policy_attachment.cluster_policy]
 }
 
 

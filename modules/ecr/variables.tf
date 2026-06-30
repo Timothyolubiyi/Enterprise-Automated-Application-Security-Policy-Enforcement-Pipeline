@@ -11,5 +11,6 @@ variable "environment" {
 }
 
 variable "kms_key_arn" {
-  type = string
+  description = "KMS key for ECR encryption"
+  type        = string
 }

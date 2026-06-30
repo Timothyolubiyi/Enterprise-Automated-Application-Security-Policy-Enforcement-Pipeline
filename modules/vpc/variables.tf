@@ -6,3 +6,8 @@ variable "subnet_cidrs" {
 variable "availability_zones" {
   type = list(string)
 }
+
+variable "kms_key_arn" {
+  description = "KMS Key ARN used to encrypt CloudWatch Log Groups"
+  type        = string
+}

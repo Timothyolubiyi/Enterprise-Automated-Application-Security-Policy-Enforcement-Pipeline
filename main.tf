@@ -145,6 +145,9 @@ module "ecr" {
 
   repository_name = "enterprise-devsecops"
   environment     = var.environment
+
+  kms_key_arn = module.kms.kms_key_arn
+
 }
 
 #############################################
