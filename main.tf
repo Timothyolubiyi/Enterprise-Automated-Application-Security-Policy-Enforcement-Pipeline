@@ -7,6 +7,8 @@ module "vpc" {
   vpc_cidr    = var.vpc_cidr
   environment = var.environment
 
+  kms_key_arn = module.kms.kms_key_arn
+
   subnet_cidrs = [
     var.public_subnet_cidr,
     var.private_subnet1_cidr,
