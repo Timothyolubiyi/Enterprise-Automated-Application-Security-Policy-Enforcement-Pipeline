@@ -76,19 +76,6 @@ resource "aws_s3_bucket_policy" "cloudtrail_policy" {
   })
 }
 
-resource "aws_s3_bucket_lifecycle_configuration" "this" {
-  bucket = aws_s3_bucket.terraform_state.id
-
-  rule {
-    id     = "state-management"
-    status = "Enabled"
-
-    noncurrent_version_expiration {
-      noncurrent_days = 30
-    }
-  }
-}
-
 # Add S3 access logging
 resource "aws_s3_bucket_logging" "terraform_state" {
   bucket = aws_s3_bucket.terraform_state.id

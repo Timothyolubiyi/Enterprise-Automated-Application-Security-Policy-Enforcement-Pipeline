@@ -41,7 +41,7 @@ resource "aws_subnet" "this" {
 
   availability_zone = element(var.availability_zones, count.index)
 
-  map_public_ip_on_launch = true
+  map_public_ip_on_launch = false
 
   tags = {
     Name = "subnet-${count.index}"
@@ -92,45 +92,6 @@ resource "aws_iam_role_policy" "flow_logs" {
   })
 }
 
-#############################################
-# IAM Policy
-#############################################
-
-resource "aws_iam_role_policy" "flow_logs" {
-
-  name = "${var.environment}-flowlogs-policy"
-
-  role = aws_iam_role.flow_logs.id
-
-  policy = jsonencode({
-
-    Version = "2012-10-17"
-
-    Statement = [
-
-      {
-
-        Effect = "Allow"
-
-        Action = [
-
-          "logs:CreateLogGroup",
-          "logs:CreateLogStream",
-          "logs:DescribeLogGroups",
-          "logs:DescribeLogStreams",
-          "logs:PutLogEvents"
-
-        ]
-
-        Resource = "*"
-
-      }
-
-    ]
-
-  })
-
-}
 
 #############################################
 # VPC Flow Logs

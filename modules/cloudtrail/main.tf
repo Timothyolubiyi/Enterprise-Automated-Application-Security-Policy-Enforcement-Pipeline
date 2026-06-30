@@ -51,36 +51,24 @@ resource "aws_iam_role" "cloudtrail_role" {
 
 
 resource "aws_iam_role_policy" "cloudtrail_policy" {
-
   name = "cloudtrail-cloudwatch-policy"
-
   role = aws_iam_role.cloudtrail_role.id
 
   policy = jsonencode({
-
     Version = "2012-10-17"
-
     Statement = [
-
       {
-
         Effect = "Allow"
-
         Action = [
           "logs:CreateLogStream",
           "logs:PutLogEvents",
           "logs:DescribeLogGroups",
           "logs:DescribeLogStreams"
         ]
-
-        Resource = "*"
-
+        Resource = "${aws_cloudwatch_log_group.trail.arn}:*"  # Specific resource
       }
-
     ]
-
   })
-
 }
 
 
@@ -89,21 +77,14 @@ resource "aws_iam_role_policy" "cloudtrail_policy" {
 #############################################
 
 resource "aws_cloudwatch_log_group" "trail" {
-
-  name = "/aws/cloudtrail/${var.trail_name}"
-
-  retention_in_days = var.retention_days
-
-  kms_key_id = var.kms_key_arn
-
+  name              = "/aws/cloudtrail/${var.trail_name}"
+  retention_in_days = 365  # 1 year minimum
+  kms_key_id        = var.kms_key_arn  # Add KMS encryption
+  
   tags = {
-
-    Name = var.trail_name
-
-    ManagedBy = "Terraform"
-
+    Name        = var.trail_name
+    ManagedBy   = "Terraform"
   }
-
 }
 
 
